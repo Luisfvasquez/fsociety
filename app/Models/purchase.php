@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class purchase extends Model
+class Purchase extends Model
 {
     protected $fillable = [
         'product_id',
@@ -15,15 +15,15 @@ class purchase extends Model
 
     public function product()
     {
-        return $this->belongsTo(product::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function supplier()
     {
-        return $this->belongsTo(supplier::class);
+        return $this->belongsTo(Supplier::class);
     }
 
     public function bulk(){
-        return $this->hasMany(bulk::class);
+        return $this->hasMany(Bulk::class);
     }
 }

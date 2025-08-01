@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cash_registers', function (Blueprint $table) {
-            $table->id();
+            $table->id()->primary();
             $table->foreignId('user_id')->constrained('users'); // Usuario que abre la caja
             $table->double('opening_balance'); // Monto inicial en caja
             $table->double('closing_balance')->nullable(); // Monto final en caja
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->double('total_expenses')->default(0); // Gastos registrados durante el turno
             $table->integer('total_transactions')->default(0); // Total de transacciones realizadas
             $table->integer('total_batches')->default(0); // Número de lotes (agrupa pagos en efectivo y tarjeta)
-            $table->enum('status', ['abierta', 'cerrada'])->default('pending'); // Estado de la caja
+            $table->enum('status', ['abierta', 'cerrada','pendiente'])->default('pendiente'); // Estado de la caja
             $table->dateTime('open_date'); // Fecha de apertura
             $table->dateTime('close_date')->nullable(); // Fecha de cierre          
         });

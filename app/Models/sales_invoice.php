@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class sales_invoice extends Model
+class Sales_invoice extends Model
 {
     protected $fillable = [
         'client_id',
@@ -13,10 +13,10 @@ class sales_invoice extends Model
     ];
 
     public function client() {
-        return $this->belongsTo(client::class);
+        return $this->belongsTo(Client::class);
     }
 
     public function sales_invoice_detail() {
-        return $this->hasMany(sales_invoice_detail::class);
+        return $this->hasMany(Sales_invoice_detail::class);
     }
 }

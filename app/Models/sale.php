@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class sale extends Model
+class Sale extends Model
 {
     protected $fillable = [
         'box_number',
@@ -16,6 +16,6 @@ class sale extends Model
     ];
 
     public function client() {
-        return $this->belongsTo(client::class);
+        return $this->belongsTo(Client::class);
     }
 }

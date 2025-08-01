@@ -2,22 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class client extends Model
+class Client extends Model
 {
+
+   use HasFactory;
+
     protected $fillable = [
-        'name',
-         'email',
-          'phone_number',
-           'address'
+      'id',
+      'email',
+      'name',
+      'phone_number',
+      'address'
     ];
 
     public function sales(){
-       return $this->belongsTo(sale::class);
+       return $this->belongsTo(Sale::class);
     }
 
     public function sales_invoice(){
-       return $this->belongsTo(sales_invoice::class);
+       return $this->belongsTo(Sales_invoice::class);
     }
 }

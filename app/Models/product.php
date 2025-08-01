@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class product extends Model
+class Product extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'id',
         'name',
@@ -19,34 +22,34 @@ class product extends Model
 
     public function categories()
     {
-        return $this->belongsTo(category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function sales()
     {
-        return $this->hasMany(sale::class);
+        return $this->hasMany(Sale::class);
     }
 
     public function sales_invoice_details() {
-        return $this->hasMany(sales_invoice_detail::class);
+        return $this->hasMany(Sales_invoice_detail::class);
     }
 
     public function bulks() {
-        return $this->hasMany(bulk::class);
+        return $this->hasMany(Bulk::class);
     }
 
     public function inventories()
     {
-        return $this->hasMany(inventory::class);
+        return $this->hasMany(Inventory::class);
     }
 
     public function purchases()
     {
-        return $this->hasMany(purchase::class);
+        return $this->hasMany(Purchase::class);
     }
 
     public function purchase_invoice_details() {
-        return $this->hasMany(purchase_invoice_detail::class);
+        return $this->hasMany(Purchase_invoice_detail::class);
     }
 
     

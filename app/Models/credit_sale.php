@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class credit_sale extends Model
+class Credit_sale extends Model
 {
     protected $fillable = [
         'sale_id',
@@ -17,11 +17,11 @@ class credit_sale extends Model
 
     public function sale()
     {
-        return $this->belongsTo(sale::class);
+        return $this->belongsTo(Sale::class);
     }
 
     public function payments()
     {
-        return $this->hasMany(payment::class);
+        return $this->hasMany(Payment::class);
     }
 }

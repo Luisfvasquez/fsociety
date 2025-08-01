@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('date_of_entry');
             $table->dateTime('due_date');
             $table->foreignId('category_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
