@@ -21,7 +21,6 @@ class ProductSeeder extends Seeder
                 'units_per_bulk' => rand(10, 20),
                 'quantity_bulk' => rand(1, 2),
                 'price_per_bulk' => rand(10,20),
-                'purchase_id' => null, // Assuming purchase_id is nullable
             ]);
 
             Inventory::create([
