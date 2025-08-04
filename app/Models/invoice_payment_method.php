@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class invoice_payment_method extends Model
+class Invoice_payment_method extends Model
 {
     protected $fillable = [ 
         'sales_invoice_id',
@@ -16,16 +16,16 @@ class invoice_payment_method extends Model
 
     public function sales_invoice()
     {
-        return $this->belongsTo(sales_invoice_detail::class);
+        return $this->belongsTo(Sales_invoice_detail::class);
     }
 
     public function payment_method()
     {
-        return $this->belongsTo(payment_method::class);
+        return $this->belongsTo(Payment_method::class);
     }
 
     public function currency()
     {
-        return $this->belongsTo(currency::class);
+        return $this->belongsTo(Currency::class);
     }
 }

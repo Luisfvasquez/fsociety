@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class cash_register extends Model
+class Cash_register extends Model
 {
     protected $fillable = [
         'user_id',

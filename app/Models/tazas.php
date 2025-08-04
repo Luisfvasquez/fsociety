@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class tazas extends Model
+class Tazas extends Model
 {
     protected $fillable = ['Taza_dollar', 'iva_day'];
 }

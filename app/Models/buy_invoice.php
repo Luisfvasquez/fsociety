@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class buy_invoice extends Model
+class Buy_invoice extends Model
 {
     protected $fillable =[
         'supplier_id',
@@ -15,12 +15,12 @@ class buy_invoice extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(supplier::class);
+        return $this->belongsTo(Supplier::class);
     }
 
     public function purchase_invoice_detail()
     {
-        return $this->hasMany(purchase_invoice_detail::class);
+        return $this->hasMany(Purchase_invoice_detail::class);
     }
 
 }

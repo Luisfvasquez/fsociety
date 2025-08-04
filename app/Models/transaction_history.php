@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class transaction_history extends Model
+class Transaction_history extends Model
 {
     protected $fillable = ['product_id', 'user_id', 'transaction_type', 'quantity'];
 }

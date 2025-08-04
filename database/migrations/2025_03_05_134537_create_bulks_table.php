@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('units_per_bulk');
             $table->integer('quantity_bulk');
             $table->decimal('price_per_bulk', 10, 2);
-            $table->foreignId('purchase_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

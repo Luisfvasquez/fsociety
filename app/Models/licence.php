@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class licence extends Model
+class Licence extends Model
 {
     protected $fillable = [
         'license_key',

@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('purchase_price');
             $table->integer('sale_price');
             $table->dateTime('date_of_entry');
             $table->dateTime('due_date');
             $table->foreignId('category_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
