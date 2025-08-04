@@ -14,6 +14,5 @@ class Bulk extends Model
         'units_per_bulk',
         'quantity_bulk',
         'price_per_bulk',
-        'purchase_id',
     ];
 }

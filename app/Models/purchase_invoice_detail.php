@@ -10,7 +10,8 @@ class Purchase_invoice_detail extends Model
         'buy_invoice_id',
         'product_id',
         'quantity_buy_product',
-        'price_buy_product'
+        'price_buy_product',
+        'bulk_id',
     ];
 
     public function product()
@@ -21,5 +22,10 @@ class Purchase_invoice_detail extends Model
     public function buy_invoice()
     {
         return $this->belongsTo(Buy_invoice::class);    
+    }
+
+    public function bulk()
+    {
+        return $this->belongsTo(Bulk::class);
     }
 }
