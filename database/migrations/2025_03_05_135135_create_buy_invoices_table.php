@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('buy_invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('supplier_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->dateTime('purchase_date_invoice');
+            $table->dateTime('date_buy');
             $table->enum('status', ['pending', 'paid', 'canceled'])->default('pending');
             $table->decimal('total_amount', 10, 2);
             $table->timestamps();

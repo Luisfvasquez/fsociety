@@ -29,7 +29,6 @@ class ProductRequest extends FormRequest
 
         return [
             'name' => 'required|string|min:3|max:255',
-            'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'date_of_entry' => 'required|date',
             'due_date' => 'nullable|date|after_or_equal:date_of_entry',

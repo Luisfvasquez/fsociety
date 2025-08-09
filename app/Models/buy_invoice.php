@@ -8,7 +8,7 @@ class Buy_invoice extends Model
 {
     protected $fillable =[
         'supplier_id',
-        'purchase_date_invoice',
+        'date_buy',
         'status',
         'total_amount',
     ];

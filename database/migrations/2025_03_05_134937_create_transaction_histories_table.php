@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->enum('transaction_type',['buy','sell']);
             $table->integer('quantity');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

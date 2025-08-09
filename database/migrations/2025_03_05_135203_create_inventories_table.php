@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->double('cost_price');
             $table->integer('stock');
             $table->integer('minimun_stock');
             $table->dateTime('last_updated')->nullable();

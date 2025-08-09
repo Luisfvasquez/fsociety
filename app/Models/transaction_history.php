@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction_history extends Model
 {
-    protected $fillable = ['product_id', 'user_id', 'transaction_type', 'quantity'];
+    protected $fillable = ['product_id', 'user_id', 'transaction_type', 'quantity', 'description'];
 }
