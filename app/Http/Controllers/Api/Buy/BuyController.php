@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\Sales;
+namespace App\Http\Controllers\Api\Buy;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SaleRequest;
+use App\Http\Requests\BuyRequest;
+use App\Models\Bulk;
 use App\Models\Buy_invoice;
 use App\Models\Inventory;
 use App\Models\Product;
@@ -12,28 +13,37 @@ use App\Models\Transaction_history;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
-class SaleController extends Controller
+class BuyController extends Controller
 {
-    public function store(SaleRequest $request)/*  : JsonResponse */
+    public $bulks = [];
+    public function store(BuyRequest $request)/*  : JsonResponse */
     {
         $data       = $request->validated();
         $products   = $data['products'];
         $details    = $data['purchase_details'];
         $porcentaje = (float) $data['option']['porcentaje'];
+        $this->bulks = $data['bulks'] ?? null;
 
-        // Usar array_reduce para sumar el total de la compra
-        // $carry representa el acumulador, detail es el elemento actual
-        $total = array_reduce($details, function ($carry, $detail) {
-            return $carry + ((float) $detail['price_buy'] * (float) $detail['quantity_buy_product']);
-        }, 0.0); //0.0 representa el valor inicial del acumulador
-        
+        //Si vienen bultos se maneja distinto la cantidad total  a partir de los bultos
+        if(empty($this->bulks)){
+            // Usar array_reduce para sumar el total de la compra
+            // $carry representa el acumulador, detail es el elemento actual
+            $total = array_reduce($details, function ($carry, $detail) {
+                return $carry + ((float) $detail['price_buy'] * (float) $detail['quantity_buy_product']);
+            }, 0.0); //0.0 representa el valor inicial del acumulador
+        }else{
+            $total = array_reduce($this->bulks, function ($carry, $bulk) {
+                return $carry + ((float) $bulk['price_per_bulk'] * (float) $bulk['quantity_bulk']);
+            }, 0.0);
+        }
 
-        
+
+
         // Fecha y hora actual
-        $now    = now(); 
-        
+        $now    = now();
+
         // ID del usuario autenticado, o 1 si no hay usuario autenticado para pruebas
-        $userId = auth()->id() ?? 1; 
+        $userId = auth()->id() ?? 1;
 
         return DB::transaction(function () use ($data, $products, $details, $porcentaje, $total, $now, $userId) {
             // Crear factura de compra
@@ -51,46 +61,71 @@ class SaleController extends Controller
             // Un solo bucle para producto, detalle, inventario e historial
             foreach ($products as $i => $p) {
                 $d          = $details[$i]; //alamacenamos el detalle de compra correspondiente del producto
-                $cost       = (float) $d['price_buy'];
-                $qty        = (float) $d['quantity_buy_product'];
-                $sale_price = round($cost * (1 + $porcentaje), 2);
+                $bulk       = $this->bulks[$i] ?? null;
+
+                if ($bulk) {
+                    $unitsPerBulk = max(1, (float) $bulk['units_per_bulk']);
+                    $qtyBulks     = (float) $bulk['quantity_bulk'];
+                    $pricePerBulk = (float) $bulk['price_per_bulk'];
+                    
+                    $unitCost = $pricePerBulk / $unitsPerBulk;            // costo por unidad
+                    $qtyUnits = $qtyBulks * $unitsPerBulk;                // unidades totales
+                } else {
+                    $unitCost = (float) ($d['price_buy'] ?? 0);
+                    $qtyUnits = (float) ($d['quantity_buy_product'] ?? 0);
+                }
+                $salePrice = round($unitCost * (1 + $porcentaje), 2);
 
                 // Normalizar imagen "null" (string) -> null
                 $imagen = isset($p['imagen']) && $p['imagen'] !== 'null' ? $p['imagen'] : null;
 
+
+
                 // Crear o actualizar producto
-                if (!empty($p['id'])) {
+                if (!empty($p['id'])) { //si existe
                     $product = Product::findOrFail($p['id']);
                     $product->update([
-                        'sale_price'    => $sale_price,
+                        'sale_price'    => $salePrice,
                         'date_of_entry' => $p['date_of_entry'] ?? $product->date_of_entry,
                         'due_date'      => $p['due_date'] ?? $product->due_date,
                         'category_id'   => $p['category_id'] ?? $product->category_id,
                         'description'   => $p['description'] ?? $product->description,
                         'imagen'        => $imagen ?? $product->imagen,
                     ]);
-                } else {
+                } else { //si no existe
                     $product = Product::create([
                         'name'          => $p['name'],
                         'description'   => $p['description'] ?? null,
-                        'sale_price'    => $sale_price,
+                        'sale_price'    => $salePrice,
                         'date_of_entry' => $p['date_of_entry'],
                         'due_date'      => $p['due_date'] ?? null,
                         'category_id'   => $p['category_id'],
                         'imagen'        => $imagen,
                     ]);
                 }
-
                 $createdProducts[] = $product->id;
+                $bulk_id = null;
+               if($bulk){
+                 $bulkModel = Bulk::create([
+                    'product_id' => $product->id,
+                    'units_per_bulk'   => (int)$unitsPerBulk,
+                    'quantity_bulk'      => (int)$qtyBulks,
+                    'price_per_bulk'      => (float)$pricePerBulk,
+                ]);
+
+                $bulk_id = $bulkModel->id;
+               }
+
 
                 // Detalle (para inserción en lote)
                 $detailRows[] = [
                     'buy_invoice_id'       => $buy->id,
                     'product_id'           => $product->id,
-                    'quantity_buy_product' => $qty,
-                    'price_buy_product'    => $cost,
-                    'bulk_id'              => $d['bulk_id'] ?? null,
+                    'quantity_buy_product' => $qtyUnits,
+                    'price_buy_product'    => round($unitCost, 4),
+                    'bulk_id'              => $bulk_id ?? null,
                 ];
+
                 // Inventario: asegurar registro y sumar stock
                 $inventory = Inventory::firstOrCreate(
                     ['product_id' => $product->id],
@@ -102,7 +137,7 @@ class SaleController extends Controller
                 );
 
                 // Incrementar stock actual sumando la cantidad comprada
-                $inventory->increment('stock', $qty);
+                $inventory->increment('stock', $qtyUnits);
                 // Actualizar la fecha de última actualización
                 $inventory->update(['last_updated' => $now]);
 
@@ -111,7 +146,7 @@ class SaleController extends Controller
                     'product_id'       => $product->id,
                     'user_id'          => $userId,
                     'transaction_type' => 'buy',
-                    'quantity'         => $qty,
+                    'quantity'         => $qtyUnits,
                     'description'      => 'Compra de producto',
                 ];
             }
