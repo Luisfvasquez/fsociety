@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('stock');
             $table->integer('minimun_stock');
+            $table->string('description')->nullable();
             $table->dateTime('last_updated')->nullable();
             $table->timestamps();
         });
